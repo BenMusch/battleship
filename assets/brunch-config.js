@@ -43,8 +43,8 @@ exports.config = {
   npm: {
     enabled: true,
     globals: {
-      Popper: "popper.js",
-      bootstrap: "bootstrap"
+      React: "react",
+      ReactDOM: "react-dom"
     }
   }
 };
