@@ -1,5 +1,6 @@
 defmodule Battleship.Game.Posn do
   alias Battleship.Game
+  alias Battleship.Game.Posn
 
   @enforce_keys [:x, :y]
   defstruct [:x, :y]

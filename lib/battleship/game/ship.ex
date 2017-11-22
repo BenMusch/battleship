@@ -1,9 +1,10 @@
 defmodule Battleship.Game.Ship do
   alias Battleship.Game
-  alias Battleship.Posn
+  alias Battleship.Game.Posn
+  alias Battleship.Game.Ship
 
-  @enforce_keys [:len]
-  defstruct [:len, :head, :tail]
+  @enforce_keys [:size]
+  defstruct [:size, :head, :tail]
 
   def create(size) do
     if Enum.member?(Game.ship_sizes, size) do
@@ -15,7 +16,7 @@ defmodule Battleship.Game.Ship do
 
   def place(ship, head, tail) do
     cond do
-      Posn.distance(head, tail) != ship.len ->
+      Posn.distance(head, tail) != ship.size ->
         {:error, :posns_dont_match_ship_size}
       head.x != tail.x && head.y != tail.y ->
         {:error, :diagonal_ship}
