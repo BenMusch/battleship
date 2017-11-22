@@ -5,7 +5,7 @@ defmodule Battleship.Game.Posn do
   @enforce_keys [:x, :y]
   defstruct [:x, :y]
 
-  def create(x, y) do
+  def new(x, y) do
     if valid_component(x) && valid_component(y) do
       {:ok, %Posn{x: x, y: y}}
     else
