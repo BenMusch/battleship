@@ -40,9 +40,23 @@ defmodule Battleship.Game.Board do
     end
   end
 
-  def guess(board, posn) do
+  def guess(board, guess) do
+    if !MapSet.member?(board.guesses, guess) do
+      board = %{ board | guesses: MapSet.put(board.guesses, guess) }
+      if Enum.any?(board.placed_ships, fn(s) -> Ship.hit?(s, guess) end) do
+        new_placed_ships = Enum.map(board.placed_ships, fn(s) ->
+          if Ship.hit?(s, guess), do: Ship.hit!(s), else: s
+        end)
+        {:hit, %{ board | placed_ships: new_placed_ships }}
+      else
+        {:no_hit, board}
+      end
+    else
+      {:no_hit, board}
+    end
   end
 
   def over?(board) do
+    Enum.all?(board.placed_ships, fn(s) -> s.sunk? end) && Enum.empty?(board.unplaced_ships)
   end
 end
