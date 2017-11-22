@@ -9,7 +9,7 @@ defmodule Battleship.Game.Board do
 
   def new do
     unplaced_ships = Enum.map(Game.ship_sizes, fn(size) ->
-      {:ok, ship} = Ship.create(size)
+      {:ok, ship} = Ship.new(size)
       ship
     end)
 

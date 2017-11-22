@@ -16,7 +16,7 @@ defmodule Battleship.Game.Ship do
 
   def place(ship, head, tail) do
     cond do
-      Posn.distance(head, tail) != ship.size ->
+      Posn.distance(head, tail) != ship.size + 1 ->
         {:error, :posns_dont_match_ship_size}
       head.x != tail.x && head.y != tail.y ->
         {:error, :diagonal_ship}
