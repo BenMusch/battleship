@@ -37,15 +37,15 @@ defmodule Battleship.Game.Ship do
         hit?(a, b.tail) || hit?(a, b.head)
       vertical?(a) ->
         (a.head.y >= b.head.y && a.tail.y <= b.head.y) ||
-          (a.head.y <= b.head.y && a.tail.y >= b.head.y) ||
+          (a.head.y <= b.head.y && a.tail.y >= b.head.y)
       vertical?(b) ->
         (b.head.y >= a.head.y && b.tail.y <= a.head.y) ||
-          (b.head.y <= a.head.y && b.tail.y >= a.head.y) ||
+          (b.head.y <= a.head.y && b.tail.y >= a.head.y)
     end
   end
 
   def hit!(ship) do
-    { ship | hits: ship.hits + 1 }
+    %{ ship | hits: ship.hits + 1 }
   end
 
   def sunk?(ship) do

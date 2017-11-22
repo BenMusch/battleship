@@ -2,6 +2,7 @@ defmodule Battleship.Game.Board do
   alias Battleship.Game
   alias Battleship.Game.Posn
   alias Battleship.Game.Ship
+  alias Battleship.Game.Board
 
   @enforce_keys [:unplaced_ships]
   defstruct [:unplaced_ships, :placed_ships, :guesses]
@@ -25,12 +26,12 @@ defmodule Battleship.Game.Board do
     if ship != nil do
       case Ship.place(ship, head, tail) do
         {:ok, ship} ->
-          if Enum.any?(board.placed_ships, fn(s) -> Ship.overlaps?(s, ship)) do
+          if Enum.any?(board.placed_ships, fn(s) -> Ship.overlaps?(s, ship) end) do
             {:error, :overlapping_ship}
           else
             new_unplaced = List.delete(board.unplaced_ships, ship)
             new_placed = [ship | board.unplaced_ships]
-            {:ok, %{ board | unplaced_ships: new_unplaced, placed_ships: placed_ships }}
+            {:ok, %{ board | unplaced_ships: new_unplaced, placed_ships: new_placed }}
           end
         {:error, reason} ->
           {:error, reason}
