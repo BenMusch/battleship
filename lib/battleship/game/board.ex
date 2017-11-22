@@ -20,17 +20,19 @@ defmodule Battleship.Game.Board do
     }
   end
 
-  def place(board, ship_size, head, tail) do
+  def place(board, head, tail) do
+    ship_size = Posn.distance(head, tail) + 1
     ship = Enum.find(board.unplaced_ships, fn(s) -> s.size == ship_size end)
+    i = Enum.find_index(board.unplaced_ships, fn(s) -> s.size == ship_size end)
 
     if ship != nil do
       case Ship.place(ship, head, tail) do
         {:ok, ship} ->
           if Enum.any?(board.placed_ships, fn(s) -> Ship.overlaps?(s, ship) end) do
-            {:error, :overlapping_ship}
+            {:error, Enum.find(board.placed_ships, fn(s) -> Ship.overlaps?(s, ship) end)}
           else
-            new_unplaced = List.delete(board.unplaced_ships, ship)
-            new_placed = [ship | board.unplaced_ships]
+            new_unplaced = List.delete_at(board.unplaced_ships, i)
+            new_placed = [ship | board.placed_ships]
             {:ok, %{ board | unplaced_ships: new_unplaced, placed_ships: new_placed }}
           end
         {:error, reason} ->

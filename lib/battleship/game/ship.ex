@@ -16,7 +16,7 @@ defmodule Battleship.Game.Ship do
 
   def place(ship, head, tail) do
     cond do
-      Posn.distance(head, tail) != ship.size + 1 ->
+      Posn.distance(head, tail) + 1 != ship.size ->
         {:error, :posns_dont_match_ship_size}
       head.x != tail.x && head.y != tail.y ->
         {:error, :diagonal_ship}
@@ -35,10 +35,10 @@ defmodule Battleship.Game.Ship do
       vertical?(a) == vertical?(b) ->
         # when parallel, check if a head/tail overlaps
         hit?(a, b.tail) || hit?(a, b.head)
-      vertical?(a) ->
+      horizontal?(a) ->
         (a.head.y >= b.head.y && a.tail.y <= b.head.y) ||
           (a.head.y <= b.head.y && a.tail.y >= b.head.y)
-      vertical?(b) ->
+      horizontal?(b) ->
         (b.head.y >= a.head.y && b.tail.y <= a.head.y) ||
           (b.head.y <= a.head.y && b.tail.y >= a.head.y)
     end
