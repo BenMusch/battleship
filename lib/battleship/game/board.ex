@@ -28,7 +28,9 @@ defmodule Battleship.Game.Board do
           if Enum.any?(board.placed_ships, fn(s) -> Ship.overlaps?(s, ship)) do
             {:error, :overlapping_ship}
           else
-            {:ok, new_board}
+            new_unplaced = List.delete(board.unplaced_ships, ship)
+            new_placed = [ship | board.unplaced_ships]
+            {:ok, %{ board | unplaced_ships: new_unplaced, placed_ships: placed_ships }}
           end
         {:error, reason} ->
           {:error, reason}
