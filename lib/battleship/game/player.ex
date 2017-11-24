@@ -1,7 +1,8 @@
 defmodule Battleship.Game.Player do
   alias Battleship.Game.Board
+  alias Battleship.Game.Player
 
-  defstruct [:turns, :board, :id]
+  defstruct [:turns, :board, :name, :id]
 
   def new(name) do
     %Player{turns: 0, board: Board.new, id: UUID.uuid1(), name: name}

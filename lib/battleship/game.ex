@@ -27,12 +27,12 @@ defmodule Battleship.Game do
 
   def guess!(game, player_id, posn) do
     player = player(game, player_id) |> Player.turn!
-    board = Map.put(game, player_key(player_id), player)
+    board = Map.put(game, player_key(game, player_id), player)
 
-    opponent = opponent(player_id)
+    opponent = opponent(game, player_id)
     {result, board} = Board.guess(opponent.board, posn)
     opponent = %{ opponent | board: board }
-    Map.put(game, opponent_key(player_id), opponent)
+    Map.put(game, opponent_key(game, player_id), opponent)
 
     {result, game}
   end
@@ -42,7 +42,7 @@ defmodule Battleship.Game do
     case Board.place(player.board, head, tail) do
       {:ok, board} ->
         player = %{ player | board: board }
-        {:ok, Map.put(game, player_key(player), player)}
+        {:ok, Map.put(game, player_key(game, player), player)}
       {:error, reason} ->
         {:error, reason}
     end
@@ -57,19 +57,19 @@ defmodule Battleship.Game do
   end
 
   defp player_key(game, player_id) do
-    case player_id do
-      game.player1.id ->
+    cond do
+      player_id == game.player1.id ->
         :player1
-      game.player2.id ->
+      player_id == game.player2.id ->
         :player2
     end
   end
 
   defp opponent_key(game, player_id) do
-    case player_id do
-      game.player1.id ->
+    cond do
+      player_id == game.player1.id ->
         :player2
-      game.player2.id ->
+      player_id == game.player2.id ->
         :player1
     end
   end
