@@ -1,4 +1,5 @@
 defmodule Battleship.Game do
+  use GenServer
   alias Battleship.Game
   alias Battleship.Game.Board
   alias Battleship.Game.Player
@@ -11,8 +12,60 @@ defmodule Battleship.Game do
   def board_size, do: @board_size
   def ship_sizes, do: @ship_sizes
 
-  def new(player1, player2) do
-    %Game{player1: player1, player2: player2}
+  #################
+  # GenServer Stuff
+  #################
+
+  def start_link(state \\ Game.new) do
+    GenServer.start_link(__MODULE__, id, name: "#{__MODULE__}-#{id}")
+  end
+
+  def handle_call({:add_player, player_id}, _from, game) do
+    {:reply, add_player(game, Player.new(player_id)), game}
+  end
+
+  def handle_call({:place, player_id, x1: x1, y1: y1, x2: x2, y2: y2}, _from, game) do
+    case Posn.new(x1, y1) do
+      {:ok, head} ->
+        case Posn.new(x2, y2) do
+          {:ok, tail} ->
+            {:reply, place(game, player_id, head, tail), game}
+          {:error, reason} ->
+            {:reply, {:error, reason}, game}
+        end
+      {:error, reason} ->
+        {:reply, {:error, reason}, game}
+    end
+  end
+
+  def handle_call({:guess, player_id, x: x, y: y}, _from, game) do
+    case Posn.new(x, y) do
+      {:ok, guess} ->
+        {:reply, place(game, player_id, guess), game}
+      {:error, reason} ->
+        {:reply, {:error, reason}, game}
+    end
+  end
+
+  def handle_call({:move, player_id, x, y})
+
+  def init(state), do: {:ok, state}
+
+  ############
+  # Game Logic
+  ############
+
+  def new, do: %Game{}
+
+  def add_player(game, player) do
+    cond do
+      game.player1 && game.player2 ->
+        {:error, :full_game}
+      game.player1 ->
+        {:ok, %{ game | player2: player }}
+      true ->
+        {:ok, %{ game | player1: player }}
+    end
   end
 
   def new_turn?(game) do
@@ -25,14 +78,17 @@ defmodule Battleship.Game do
     end)
   end
 
-  def guess!(game, player_id, posn) do
-    player = player(game, player_id) |> Player.turn!
-    board = Map.put(game, player_key(game, player_id), player)
-
+  def guess(game, player_id, posn) do
     opponent = opponent(game, player_id)
     {result, board} = Board.guess(opponent.board, posn)
-    opponent = %{ opponent | board: board }
-    Map.put(game, opponent_key(game, player_id), opponent)
+
+    if result != :error do
+      opponent = %{ opponent | board: board }
+      Map.put(game, opponent_key(game, player_id), opponent)
+
+      player = player(game, player_id) |> Player.turn!
+      board = Map.put(game, player_key(game, player_id), player)
+    end
 
     {result, game}
   end
