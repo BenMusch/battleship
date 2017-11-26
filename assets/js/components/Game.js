@@ -14,7 +14,7 @@ class Game extends React.Component {
 
   componentDidMount() {
     channel.join()
-      .receive("ok", resp => this.props.joinGame(resp.id))
+      .receive("ok", resp => console.log(resp) || this.props.joinGame(resp.player.id))
       .receive("error", resp => this.props.failJoin())
   }
 

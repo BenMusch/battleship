@@ -8,7 +8,7 @@ defmodule BattleshipWeb.PlayerChannel do
       {:ok, game} ->
         socket = socket |> assign(:player_id, id)
         IO.inspect(game)
-        {:ok, %{id: id}, socket}
+        {:ok, game, socket}
       {:error, reason} ->
         {:error, %{reason: reason}}
     end

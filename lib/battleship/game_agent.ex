@@ -5,7 +5,6 @@ defmodule Battleship.GameAgent do
   alias Battleship.Game.Player
 
   def start_link(state \\ Game.new) do
-    IO.puts "STARTING"
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
@@ -23,7 +22,7 @@ defmodule Battleship.GameAgent do
 
   def handle_call({:add_player, player_id}, _from, game) do
     {result, game} = Game.add_player(game, Player.new(player_id))
-    {:reply, {result, game}, game}
+    {:reply, {result, Game.view_for(game, player_id)}, game}
   end
 
   def handle_call({:place, player_id, x1: x1, y1: y1, x2: x2, y2: y2}, _from, game) do

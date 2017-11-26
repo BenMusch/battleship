@@ -13,6 +13,19 @@ defmodule Battleship.Game do
 
   def new, do: %Game{}
 
+  def view_for(game, player_id) do
+    player = player(game, player_id)
+
+    opponent = opponent(game, player_id)
+    opponent_board = if opponent == nil, do: Board.new, else: opponent.board
+
+    %{
+      player: %{ id: player_id },
+      opponent: Board.opponent_view(opponent_board),
+      board: Board.owner_view(player.board)
+    }
+  end
+
   def add_player(game, player) do
     cond do
       game.player1 && game.player2 ->
@@ -61,11 +74,11 @@ defmodule Battleship.Game do
   end
 
   defp opponent(game, player_id) do
-    game[opponent_key(game, player_id)]
+    Map.get(game, opponent_key(game, player_id))
   end
 
   defp player(game, player_id) do
-    game[player_key(game, player_id)]
+    Map.get(game, player_key(game, player_id))
   end
 
   defp player_key(game, player_id) do
