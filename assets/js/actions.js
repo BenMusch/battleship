@@ -1,6 +1,13 @@
-export const joinGame = () => {
+export const joinGame = (id) => {
   return {
-    type: 'JOIN_GAME'
+    type: 'JOIN_GAME',
+    id: id
+  }
+}
+
+export const failJoin = () => {
+  return {
+    type: 'FAIL_JOIN'
   }
 }
 
