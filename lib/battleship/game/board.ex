@@ -23,14 +23,14 @@ defmodule Battleship.Game.Board do
   def opponent_view(board) do
     %{
       unplaced_ships: Enum.map(board.unplaced_ships, fn(s) -> s.size end),
-      guesses: transcribed_guesses(board)
+      grid: transcribed_guesses(board)
     }
   end
 
   def owner_view(board) do
     %{
       unplaced_ships: Enum.map(board.unplaced_ships, fn(s) -> s.size end),
-      guesses: transcribed_guesses(board),
+      grid: transcribed_guesses(board),
       placed_ships: Enum.map(board.placed_ships, fn(s) ->
         %{
           sunk: Ship.sunk?(s),

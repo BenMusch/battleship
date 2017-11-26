@@ -1,1 +1,6 @@
 /* This file is for your main application css. */
+
+.tile{
+  width: 2em;
+  height: 2em;
+}

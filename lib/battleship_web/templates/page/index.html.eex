@@ -1,1 +1,7 @@
-<div id="app"></div>
+<div class="container">
+  <center>
+    <h1>Welcome to Battleship!</h1>
+  </center>
+
+  <div id="app"></div>
+</div>

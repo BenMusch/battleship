@@ -1,12 +1,14 @@
 import React from 'react'
+
 import socket from "../socket"
+import Boards from "./Boards"
 
 class Game extends React.Component {
   mainDisplay() {
     if (this.props.player.joining) {
       return React.createElement('p', {}, 'Joining...')
     } else if (this.props.player.id) {
-      return React.createElement('p', {}, `Joined as ${this.props.player.id}`)
+      return <Boards player={this.props.board} opponent={this.props.opponent} />
     } else {
       return React.createElement('p', {}, 'Full game!')
     }
@@ -16,7 +18,6 @@ class Game extends React.Component {
     let channel = socket.channel("game:join")
     channel.join()
       .receive("ok", resp => {
-        console.log(resp)
         this.props.joinGame(resp.player.id)
         this.props.updateBoard(resp.board)
         this.props.updateOpponent(resp.opponent)
@@ -26,7 +27,7 @@ class Game extends React.Component {
 
   render() {
     return (
-      <div className="app-container">
+      <div className="app-container container">
         {this.mainDisplay()}
       </div>
     )
