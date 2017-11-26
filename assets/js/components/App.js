@@ -1,7 +1,7 @@
 const App = (props) => {
   return (
     <div className="app-container">
-      <h3>Hello, from React</h3>
+      <h3>Joining...</h3>
     </div>
   )
 }
