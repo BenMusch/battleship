@@ -2,7 +2,7 @@ defmodule BattleshipWeb.PlayerChannel do
   use BattleshipWeb, :channel
   alias Battleship.GameAgent
 
-  def join("player:game", _payload, socket) do
+  def join("game:join", _payload, socket) do
     id = UUID.uuid1()
     case GameAgent.add_player(id) do
       {:ok, game} ->

@@ -11,18 +11,16 @@ export const failJoin = () => {
   }
 }
 
-export const placeShip = (head, tail) => {
+export const updateBoard = (board) => {
   return {
-    type: 'PLACE_SHIP',
-    head,
-    tail
+    type: 'UPDATE_BOARD',
+    board
   }
 }
 
-export const guess = (x, y) => {
+export const updateOpponent = (opponent) => {
   return {
-    type: 'GUESS',
-    x,
-    y
+    type: 'UPDATE_OPPONENT',
+    opponent
   }
 }

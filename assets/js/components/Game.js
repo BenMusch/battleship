@@ -1,5 +1,5 @@
 import React from 'react'
-import channel from "../socket"
+import socket from "../socket"
 
 class Game extends React.Component {
   mainMessage() {
@@ -13,8 +13,14 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
+    let channel = socket.channel("game:join")
     channel.join()
-      .receive("ok", resp => console.log(resp) || this.props.joinGame(resp.player.id))
+      .receive("ok", resp => {
+        console.log(resp)
+        this.props.joinGame(resp.player.id)
+        this.props.updateBoard(resp.board)
+        this.props.updateOpponent(resp.opponent)
+      })
       .receive("error", resp => this.props.failJoin())
   }
 
