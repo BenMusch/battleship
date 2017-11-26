@@ -11,8 +11,17 @@ defmodule Battleship.Game do
   def board_size, do: @board_size
   def ship_sizes, do: @ship_sizes
 
-  def new(player1, player2) do
-    %Game{player1: player1, player2: player2}
+  def new, do: %Game{}
+
+  def add_player(game, player) do
+    cond do
+      game.player1 && game.player2 ->
+        {:error, :full_game}
+      game.player1 ->
+        {:ok, %{ game | player2: player }}
+      true ->
+        {:ok, %{ game | player1: player }}
+    end
   end
 
   def new_turn?(game) do
@@ -25,14 +34,17 @@ defmodule Battleship.Game do
     end)
   end
 
-  def guess!(game, player_id, posn) do
-    player = player(game, player_id) |> Player.turn!
-    board = Map.put(game, player_key(game, player_id), player)
-
+  def guess(game, player_id, posn) do
     opponent = opponent(game, player_id)
     {result, board} = Board.guess(opponent.board, posn)
-    opponent = %{ opponent | board: board }
-    Map.put(game, opponent_key(game, player_id), opponent)
+
+    if result != :error do
+      opponent = %{ opponent | board: board }
+      Map.put(game, opponent_key(game, player_id), opponent)
+
+      player = player(game, player_id) |> Player.turn!
+      board = Map.put(game, player_key(game, player_id), player)
+    end
 
     {result, game}
   end
