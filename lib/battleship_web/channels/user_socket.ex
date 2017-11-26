@@ -1,7 +1,7 @@
 defmodule BattleshipWeb.UserSocket do
   use Phoenix.Socket
 
-  channel "player:game", BattleshipWeb.PlayerChannel
+  channel "game:*", BattleshipWeb.PlayerChannel
 
   transport :websocket, Phoenix.Transports.WebSocket
 

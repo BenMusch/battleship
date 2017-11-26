@@ -2,13 +2,13 @@ import React from 'react'
 import socket from "../socket"
 
 class Game extends React.Component {
-  mainMessage() {
+  mainDisplay() {
     if (this.props.player.joining) {
-      return 'Joining...'
+      return React.createElement('p', {}, 'Joining...')
     } else if (this.props.player.id) {
-      return `ID: ${this.props.player.id}`
+      return React.createElement('p', {}, `Joined as ${this.props.player.id}`)
     } else {
-      return 'Full game!'
+      return React.createElement('p', {}, 'Full game!')
     }
   }
 
@@ -27,7 +27,7 @@ class Game extends React.Component {
   render() {
     return (
       <div className="app-container">
-        {this.mainMessage()}
+        {this.mainDisplay()}
       </div>
     )
   }
