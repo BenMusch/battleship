@@ -1,12 +1,9 @@
 const player = (state = {}, action) => {
   switch(action.type) {
     case 'JOIN_GAME':
-      state.joining = false
-      state.id = action.id
-      return state
+      return { joining: false, id: action.id }
     case 'FAIL_JOIN':
-      state.joining = false
-      return state
+      return { joining: false }
     default:
       return state
   }
