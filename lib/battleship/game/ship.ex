@@ -48,6 +48,20 @@ defmodule Battleship.Game.Ship do
     %{ ship | hits: ship.hits + 1 }
   end
 
+  def coords(ship) do
+    if vertical?(ship) do
+      Enum.map((ship.head.y)..(ship.tail.y), fn(y) ->
+        {:ok, posn} = Posn.new(y, ship.head.x)
+        posn
+      end)
+    else
+      Enum.map((ship.head.x)..(ship.tail.x), fn(x) ->
+        {:ok, posn} = Posn.new(ship.head.y, x)
+        posn
+      end)
+    end
+  end
+
   def sunk?(ship) do
     ship.hits == ship.size
   end

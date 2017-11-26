@@ -7,6 +7,13 @@ defmodule Battleship.Game.Board do
   @enforce_keys [:unplaced_ships]
   defstruct [:unplaced_ships, :placed_ships, :guesses]
 
+  @empty_matrix Enum.map(0...Game.board_size, fn(y) ->
+    Enum.map(0...Game.board_size, fn(x) ->
+      {:ok, posn} = Posn.new(x, y)
+      posn
+    end)
+  end)
+
   def new do
     unplaced_ships = Enum.map(Game.ship_sizes, fn(size) ->
       {:ok, ship} = Ship.new(size)
@@ -17,6 +24,26 @@ defmodule Battleship.Game.Board do
       unplaced_ships: unplaced_ships,
       placed_ships: [],
       guesses: MapSet.new
+    }
+  end
+
+  def opponent_view(board) do
+    {
+      unplaced_ships: Enum.map(board.unplaced_ships, fn(s) -> s.size end),
+      guesses: transcribed_guesses(board)
+    }
+  end
+
+  def owner_view(board) do
+    {
+      unplaced_ships: Enum.map(board.unplaced_ships, fn(s) -> s.size end),
+      guesses: transcribed_guesses(board),
+      placed_ships: Enum.map(board.placed_ships, fn(s) ->
+        %{
+          sunk: Ship.sunk?(s),
+          coords: Enum.map(Ship.coords(s), fn(p) -> [p.x, p.y] end)
+        }
+      end)
     }
   end
 
@@ -61,5 +88,30 @@ defmodule Battleship.Game.Board do
 
   def over?(board) do
     Enum.all?(board.placed_ships, fn(s) -> s.sunk? end) && Enum.empty?(board.unplaced_ships)
+  end
+
+  # Returns the index of the ship located at the coordinates, if any
+  defp ship_at(board, posn) do
+    Enum.find_index(board.placed_ships, fn(s) -> Ship.hit?(s, posn) end)
+  end
+
+  defp transcribed_guesses(board) do
+    Enum.map(@empty_matrix, fn(row) ->
+      Enum.map(row, fn(posn) ->
+        if MapSet.member?(board.guesses, posn) do
+          ship_i = ship_at(posn)
+          cond do
+            ship_i == nil ->
+              :GUESSED
+            Ship.sunk?(board.placed_ships[i]) ->
+              :SUNK
+            true ->
+              :HIT
+          end
+        else
+          :NOT_GUESSED
+        end
+      end)
+    end)
   end
 end
