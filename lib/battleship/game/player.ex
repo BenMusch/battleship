@@ -4,8 +4,8 @@ defmodule Battleship.Game.Player do
 
   defstruct [:turns, :board, :id]
 
-  def new(id) do
-    %Player{turns: 0, board: Board.new, id: id}
+  def new do
+    %Player{turns: 0, board: Board.new, id: UUID.uuid1()}
   end
 
   def turn!(player) do

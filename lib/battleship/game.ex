@@ -1,4 +1,5 @@
 defmodule Battleship.Game do
+  alias Battleship.Game
   alias Battleship.Game.Board
   alias Battleship.Game.Player
 
