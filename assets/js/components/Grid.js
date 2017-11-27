@@ -20,17 +20,45 @@ class Tile extends React.Component {
 
   render() {
     return (
-      <td className={this.classFromState()}>
+      <td className={this.classFromState()} onClick={this.props.onClick}>
       </td>
     )
   }
 }
 
 class Grid extends React.Component {
+  constructor() {
+    super()
+    this.state = { head: null }
+  }
+
+  handleGuess(x, y) {
+    // TODO
+  }
+
+  handlePlace(x, y) {
+    if (this.state.head) {
+      console.log('WOULD PLACE', this.state.head, [x, y])
+      this.setState({ head: null })
+    } else {
+      this.setState({ head: [x, y] })
+    }
+  }
+
+  handleClick(x, y) {
+    if (this.props.canPlace) {
+      this.handlePlace(x, y)
+    } else if (this.props.canGuess) {
+      this.handleGuess(x, y)
+    }
+  }
+
   render() {
-    let rows = this.props.grid.map((row, i) => {
-      let tiles = row.map((square, j) => <Tile key={j} state={square}/>)
-      return (<tr key={i}>{tiles}</tr>)
+    let rows = this.props.grid.map((row, y) => {
+      let tiles = row.map((square, x) => {
+        return <Tile onClick={this.handleClick.bind(this, x, y)} key={x} state={square}/>
+      })
+      return (<tr key={y}>{tiles}</tr>)
     })
 
     return (
