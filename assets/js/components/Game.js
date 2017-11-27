@@ -8,7 +8,7 @@ class Game extends React.Component {
     if (this.props.player.joining) {
       return React.createElement('p', {}, 'Joining...')
     } else if (this.props.player.id && this.props.opponent.id) {
-      return <Boards player={this.props.board} opponent={this.props.opponent} />
+      return <Boards player={this.props.board} opponent={this.props.opponent} updateBoard={this.props.updateBoard} updateOpponent={this.props.updateOpponent} />
     } else if (this.props.player.id) {
       return React.createElement('p', {}, 'Waiting for opponent...')
     } else {

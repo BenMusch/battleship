@@ -34,7 +34,12 @@ defmodule Battleship.GameAgent do
       {:ok, head} ->
         case Posn.new(x2, y2) do
           {:ok, tail} ->
-            {:reply, Game.place(game, player_id, head, tail), game}
+            case Game.place(game, player_id, head, tail) do
+              {:ok, game} ->
+                {:reply, {:ok, Game.view_for(game, player_id)}, game}
+              {:error, reason} ->
+                {:reply, {:error, reason}, game}
+            end
           {:error, reason} ->
             {:reply, {:error, reason}, game}
         end
@@ -46,7 +51,12 @@ defmodule Battleship.GameAgent do
   def handle_call({:guess, player_id, x: x, y: y}, _from, game) do
     case Posn.new(x, y) do
       {:ok, guess} ->
-        {:reply, Game.guess(game, player_id, guess), game}
+        case Game.guess(game, player_id, guess) do
+          {:ok, game} ->
+            {:reply, {:ok, Game.view_for(game, player_id)}, game}
+          {:error, reason} ->
+            {:reply, {:error, reason}, game}
+        end
       {:error, reason} ->
         {:reply, {:error, reason}, game}
     end

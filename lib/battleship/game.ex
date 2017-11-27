@@ -18,8 +18,6 @@ defmodule Battleship.Game do
 
     opponent = opponent(game, player_id)
 
-    IO.puts "opponent:"
-    IO.inspect opponent
     opponent_board = if opponent == nil, do: Board.new, else: opponent.board
     opponent_id = if opponent == nil, do: nil, else: opponent.id
 
@@ -71,7 +69,9 @@ defmodule Battleship.Game do
     case Board.place(player.board, head, tail) do
       {:ok, board} ->
         player = %{ player | board: board }
-        {:ok, Map.put(game, player_key(game, player), player)}
+        game = Map.put(game, player_key(game, player_id), player)
+        IO.inspect(game)
+        {:ok, game}
       {:error, reason} ->
         {:error, reason}
     end

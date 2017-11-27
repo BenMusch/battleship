@@ -93,7 +93,7 @@ defmodule Battleship.Game.Board do
         cond do
           ship_i == nil && MapSet.member?(board.guesses, posn) ->
             :GUESSED
-          ship_i != nil && Ship.sunk?(board.placed_ships[ship_i]) ->
+          ship_i != nil && Ship.sunk?(Enum.at(board.placed_ships, ship_i)) ->
             :SUNK
           ship_i != nil && MapSet.member?(board.guesses, posn) ->
             :HIT

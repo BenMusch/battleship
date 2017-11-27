@@ -28,6 +28,8 @@ class Boards extends React.Component {
               grid={this.props.player.grid}
               canPlace={this.props.player.unplaced_ships.length > 0}
               canGuess={false}
+              updateBoard={this.props.updateBoard}
+              updateOpponent={this.props.updateOpponent}
             />
           </div>
         </div>
@@ -37,6 +39,8 @@ class Boards extends React.Component {
               grid={this.props.opponent.grid}
               canPlace={false}
               canGuess={this.canGuess()}
+              updateBoard={this.props.updateBoard}
+              updateOpponent={this.props.updateOpponent}
             />
           </div>
 
