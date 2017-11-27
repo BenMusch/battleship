@@ -1,8 +1,11 @@
-import {Socket} from "phoenix"
+import uuid from 'uuid/v1'
+import {Socket} from 'phoenix'
 
-let socket = new Socket("/socket", {params: {}})
+let socket = new Socket('/socket', {params: {}})
 socket.connect()
 
-let channel = socket.channel("game:join")
+window.uuid = uuid()
+let channel = socket.channel(`player:${window.uuid}`)
+
 
 export default channel

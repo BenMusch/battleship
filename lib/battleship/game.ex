@@ -17,11 +17,15 @@ defmodule Battleship.Game do
     player = player(game, player_id)
 
     opponent = opponent(game, player_id)
+
+    IO.puts "opponent:"
+    IO.inspect opponent
     opponent_board = if opponent == nil, do: Board.new, else: opponent.board
+    opponent_id = if opponent == nil, do: nil, else: opponent.id
 
     %{
       player: %{ id: player_id },
-      opponent: Board.opponent_view(opponent_board),
+      opponent: Map.put(Board.opponent_view(opponent_board), :id, opponent_id),
       board: Board.owner_view(player.board)
     }
   end
@@ -71,6 +75,10 @@ defmodule Battleship.Game do
       {:error, reason} ->
         {:error, reason}
     end
+  end
+
+  def full?(game) do
+    game.player1 != nil && game.player2 != nil
   end
 
   defp opponent(game, player_id) do

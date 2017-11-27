@@ -12,7 +12,8 @@ const defaultState = {
   },
   opponent: {
     grid: Array(10).fill(Array(10).fill(NOT_GUESSED)),
-    unplaced_ships: [5, 4, 3, 3, 2]
+    unplaced_ships: [5, 4, 3, 3, 2],
+    id: null
   }
 }
 

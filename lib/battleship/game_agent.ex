@@ -20,6 +20,10 @@ defmodule Battleship.GameAgent do
     GenServer.call(__MODULE__, {:guess, player_id, x: x, y: y})
   end
 
+  def get_data(player_id) do
+    GenServer.call(__MODULE__, {:get_data, player_id})
+  end
+
   def handle_call({:add_player, player_id}, _from, game) do
     {result, game} = Game.add_player(game, Player.new(player_id))
     {:reply, {result, Game.view_for(game, player_id)}, game}
@@ -46,6 +50,10 @@ defmodule Battleship.GameAgent do
       {:error, reason} ->
         {:reply, {:error, reason}, game}
     end
+  end
+
+  def handle_call({:get_data, player_id}, _from, game) do
+    {:reply, {:ok, Game.view_for(game, player_id)}, game}
   end
 
   def init(state), do: {:ok, state}
