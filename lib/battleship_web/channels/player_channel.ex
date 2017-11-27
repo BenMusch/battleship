@@ -25,7 +25,19 @@ defmodule BattleshipWeb.PlayerChannel do
   def handle_in("place", %{"x1" => x1, "y1" => y1, "x2" => x2, "y2" => y2}, socket) do
     player_id = socket.assigns[:player_id]
     case GameAgent.place(player_id, x1: x1, y1: y1, x2: x2, y2: y2) do
-      {:ok, game} ->
+      {:ok, _} ->
+        {:ok, game} = GameAgent.get_data(player_id)
+        update_opponent!(game)
+        {:reply, {:ok, game}, socket}
+      {:error, reason} ->
+        {:reply, {:error, %{reason: reason}}, socket}
+    end
+  end
+
+  def handle_in("guess", %{"x" => x, "y" => y}, socket) do
+    player_id = socket.assigns[:player_id]
+    case GameAgent.guess(player_id, x: x, y: y) do
+      {:ok, _} ->
         {:ok, game} = GameAgent.get_data(player_id)
         update_opponent!(game)
         {:reply, {:ok, game}, socket}

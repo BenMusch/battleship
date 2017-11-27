@@ -50,18 +50,22 @@ defmodule Battleship.Game do
   end
 
   def guess(game, player_id, posn) do
-    opponent = opponent(game, player_id)
-    {result, board} = Board.guess(opponent.board, posn)
+    if Game.can_guess?(game, player_id) do
+      opponent = opponent(game, player_id)
+      {result, board} = Board.guess(opponent.board, posn)
 
-    if result != :error do
-      opponent = %{ opponent | board: board }
-      Map.put(game, opponent_key(game, player_id), opponent)
+      if result != :error do
+        opponent = %{ opponent | board: board }
+        game = Map.put(game, opponent_key(game, player_id), opponent)
 
-      player = player(game, player_id) |> Player.turn!
-      board = Map.put(game, player_key(game, player_id), player)
+        player = player(game, player_id) |> Player.turn!
+        game = Map.put(game, player_key(game, player_id), player)
+      end
+
+      {result, game}
+    else
+      {:error, :cant_guess}
     end
-
-    {result, game}
   end
 
   def place(game, player_id, head, tail) do
@@ -78,6 +82,15 @@ defmodule Battleship.Game do
 
   def full?(game) do
     game.player1 != nil && game.player2 != nil
+  end
+
+  def can_guess?(game, player_id) do
+    if full?(game) do
+      turns_behind_opponent = opponent(game, player_id).turns - player(game, player_id).turns
+      turns_behind_opponent == 1 || turns_behind_opponent == 0
+    else
+      false
+    end
   end
 
   defp opponent(game, player_id) do

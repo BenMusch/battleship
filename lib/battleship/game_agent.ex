@@ -52,10 +52,10 @@ defmodule Battleship.GameAgent do
     case Posn.new(x, y) do
       {:ok, guess} ->
         case Game.guess(game, player_id, guess) do
-          {:ok, game} ->
-            {:reply, {:ok, Game.view_for(game, player_id)}, game}
           {:error, reason} ->
             {:reply, {:error, reason}, game}
+          {result, game} ->
+            {:reply, {:ok, Game.view_for(game, player_id)}, game}
         end
       {:error, reason} ->
         {:reply, {:error, reason}, game}

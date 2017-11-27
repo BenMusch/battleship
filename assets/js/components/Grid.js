@@ -31,7 +31,14 @@ class Grid extends React.Component {
   }
 
   handleGuess(x, y) {
-    // TODO
+    console.log('GUESSING', [x, y])
+    channel.push('guess', { x, y })
+      .receive('ok', resp => {
+        console.log(resp)
+        this.props.updateBoard(resp.board)
+        this.props.updateOpponent(resp.opponent)
+      })
+      .receive('error', resp => window.alert(resp.reason))
   }
 
   handlePlace(x, y) {

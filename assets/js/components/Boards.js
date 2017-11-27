@@ -8,7 +8,7 @@ class Boards extends React.Component {
   }
 
   canGuess() {
-    this.props.player.unplaced_ships.length + this.props.opponent.unplaced_ships.length == 0
+    return this.props.player.unplaced_ships.length + this.props.opponent.unplaced_ships.length == 0
   }
 
   render() {
