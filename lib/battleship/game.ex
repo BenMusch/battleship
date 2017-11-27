@@ -70,7 +70,6 @@ defmodule Battleship.Game do
       {:ok, board} ->
         player = %{ player | board: board }
         game = Map.put(game, player_key(game, player_id), player)
-        IO.inspect(game)
         {:ok, game}
       {:error, reason} ->
         {:error, reason}

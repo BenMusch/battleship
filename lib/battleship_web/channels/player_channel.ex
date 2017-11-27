@@ -16,12 +16,7 @@ defmodule BattleshipWeb.PlayerChannel do
     if !socket.assigns[:confirmed] do
       socket = assign(socket, :confirmed, true)
       {:ok, game} = GameAgent.get_data(socket.assigns[:player_id])
-
-      if game[:opponent][:id] != nil do
-        id = game[:opponent][:id]
-        {:ok, game} = GameAgent.get_data(id)
-        BattleshipWeb.Endpoint.broadcast!("player:#{id}", "update", game)
-      end
+      update_opponent!(game)
     end
 
     {:noreply, socket}
@@ -31,9 +26,19 @@ defmodule BattleshipWeb.PlayerChannel do
     player_id = socket.assigns[:player_id]
     case GameAgent.place(player_id, x1: x1, y1: y1, x2: x2, y2: y2) do
       {:ok, game} ->
-        {:reply, GameAgent.get_data(player_id), socket}
+        {:ok, game} = GameAgent.get_data(player_id)
+        update_opponent!(game)
+        {:reply, {:ok, game}, socket}
       {:error, reason} ->
         {:reply, {:error, %{reason: reason}}, socket}
+    end
+  end
+
+  defp update_opponent!(game) do
+    if game[:opponent][:id] != nil do
+      id = game[:opponent][:id]
+      {:ok, game} = GameAgent.get_data(id)
+      BattleshipWeb.Endpoint.broadcast!("player:#{id}", "update", game)
     end
   end
 end

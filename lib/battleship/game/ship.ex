@@ -31,7 +31,7 @@ defmodule Battleship.Game.Ship do
 
   def overlaps?(a, b) do
     Enum.any?(Ship.coords(a), fn(posn1) ->
-      Enum.any?(Ship.coords(b), fn(posn2) -> posn2.x == posn1.x && posn1.y == posn1.y end)
+      Enum.any?(Ship.coords(b), fn(posn2) -> posn2.x == posn1.x && posn2.y == posn1.y end)
     end)
   end
 

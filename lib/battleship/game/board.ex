@@ -85,7 +85,6 @@ defmodule Battleship.Game.Board do
 
   defp transcribed_guesses(board, show_ships) do
     range = 0..(Game.board_size - 1)
-    IO.inspect(board)
     Enum.map(range, fn(y) ->
       Enum.map(range, fn(x) ->
         {:ok, posn} = Posn.new(x, y)
