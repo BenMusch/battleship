@@ -82,11 +82,14 @@ defmodule Battleship.Game do
   end
 
   defp player_key(game, player_id) do
+    # TODO: Have a 'waiting for an opponent' state
     cond do
-      player_id == game.player1.id ->
+      game.player1 != nil && player_id == game.player1.id ->
         :player1
-      player_id == game.player2.id ->
+      game.player2 != nil && player_id == game.player2.id ->
         :player2
+      true ->
+        nil
     end
   end
 
@@ -96,6 +99,8 @@ defmodule Battleship.Game do
         :player2
       player_id == game.player2.id ->
         :player1
+      true ->
+        nil
     end
   end
 end

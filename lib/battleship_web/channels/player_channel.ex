@@ -18,7 +18,7 @@ defmodule BattleshipWeb.PlayerChannel do
     player_id = socket.assigns[:player_id]
     case GameAgent.place(player_id, x1: x1, y1: y1, x2: x2, y2: y2) do
       {:ok, game} ->
-        {:ok, game, socket}
+        {:ok, {:ok, game}, socket}
       {:error, reason} ->
         {:error, %{reason: reason}}
     end

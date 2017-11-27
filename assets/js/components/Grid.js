@@ -43,14 +43,15 @@ class Grid extends React.Component {
     if (this.state.head) {
       console.log('PLACING', this.state.head, [x, y])
       channel.push('place', {
-        x1: this.state.head.x,
-        y1: this.state.head.y,
+        x1: this.state.head[0],
+        y1: this.state.head[1],
         x2: x,
         y2: y
-      }).receive("ok", resp => {
+      }).receive('ok', resp => {
+        console.log(resp)
         this.props.updateBoard(resp.board)
         this.props.updateOpponent(resp.opponent)
-      }).receive("error", resp => window.alert(resp.reason))
+      }).receive('error', resp => window.alert(resp.reason))
 
       this.setState({ head: null })
     } else {
