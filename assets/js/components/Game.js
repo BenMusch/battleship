@@ -1,6 +1,6 @@
 import React from 'react'
 
-import socket from "../socket"
+import channel from "../socket"
 import Boards from "./Boards"
 
 class Game extends React.Component {
@@ -15,7 +15,6 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
-    let channel = socket.channel("game:join")
     channel.join()
       .receive("ok", resp => {
         this.props.joinGame(resp.player.id)

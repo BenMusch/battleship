@@ -1,10 +1,14 @@
 import React from 'react'
-import { NOT_GUESSED, GUESSED, HIT, SUNK } from '../battleship/constants'
+
+import channel from '../socket'
+import { NOT_GUESSED, GUESSED, HIT, SUNK, SHIP } from '../battleship/constants'
 
 class Tile extends React.Component {
   classFromState() {
     let defaults = 'border tile'
     switch(this.props.state) {
+      case SHIP:
+        return `bg-primary ${defaults}`
       case NOT_GUESSED:
         return `bg-light ${defaults}`
       case GUESSED:
@@ -20,8 +24,7 @@ class Tile extends React.Component {
 
   render() {
     return (
-      <td className={this.classFromState()} onClick={this.props.onClick}>
-      </td>
+      <td className={this.classFromState()} onClick={this.props.onClick}></td>
     )
   }
 }
@@ -38,7 +41,17 @@ class Grid extends React.Component {
 
   handlePlace(x, y) {
     if (this.state.head) {
-      console.log('WOULD PLACE', this.state.head, [x, y])
+      console.log('PLACING', this.state.head, [x, y])
+      channel.push('place', {
+        x1: this.state.head.x,
+        y1: this.state.head.y,
+        x2: x,
+        y2: y
+      }).receive("ok", resp => {
+        this.props.updateBoard(resp.board)
+        this.props.updateOpponent(resp.opponent)
+      }).receive("error", resp => window.alert(resp.reason))
+
       this.setState({ head: null })
     } else {
       this.setState({ head: [x, y] })

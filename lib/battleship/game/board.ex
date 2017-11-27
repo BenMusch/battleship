@@ -23,14 +23,14 @@ defmodule Battleship.Game.Board do
   def opponent_view(board) do
     %{
       unplaced_ships: Enum.map(board.unplaced_ships, fn(s) -> s.size end),
-      grid: transcribed_guesses(board)
+      grid: transcribed_guesses(board, false)
     }
   end
 
   def owner_view(board) do
     %{
       unplaced_ships: Enum.map(board.unplaced_ships, fn(s) -> s.size end),
-      grid: transcribed_guesses(board),
+      grid: transcribed_guesses(board, true),
       placed_ships: Enum.map(board.placed_ships, fn(s) ->
         %{
           sunk: Ship.sunk?(s),
@@ -83,24 +83,24 @@ defmodule Battleship.Game.Board do
     Enum.all?(board.placed_ships, fn(s) -> s.sunk? end) && Enum.empty?(board.unplaced_ships)
   end
 
-  defp transcribed_guesses(board) do
+  defp transcribed_guesses(board, show_ships) do
     range = 0..(Game.board_size - 1)
     Enum.map(range, fn(y) ->
       Enum.map(range, fn(x) ->
         {:ok, posn} = Posn.new(x, y)
 
-        if MapSet.member?(board.guesses, posn) do
-          ship_i = ship_at(board, posn)
-          cond do
-            ship_i == nil ->
-              :GUESSED
-            Ship.sunk?(board.placed_ships[ship_i]) ->
-              :SUNK
-            true ->
-              :HIT
-          end
-        else
-          :NOT_GUESSED
+        ship_i = ship_at(board, posn)
+        cond do
+          MapSet.member?(board.guesses, posn) && ship_i == nil ->
+            :GUESSED
+          Ship.sunk?(board.placed_ships[ship_i]) ->
+            :SUNK
+          MapSet.member?(board.guesses, posn) && true ->
+            :HIT
+          show_ships && ship_i != nil ->
+            :SHIP
+          true ->
+            :NOT_GUESSED
         end
       end)
     end)
