@@ -49,7 +49,7 @@ defmodule Battleship.Game.Board do
       case Ship.place(ship, head, tail) do
         {:ok, ship} ->
           if Enum.any?(board.placed_ships, fn(s) -> Ship.overlaps?(s, ship) end) do
-            {:error, Enum.find(board.placed_ships, fn(s) -> Ship.overlaps?(s, ship) end)}
+            {:error, :overlapping_ship}
           else
             new_unplaced = List.delete_at(board.unplaced_ships, i)
             new_placed = [ship | board.placed_ships]
@@ -85,6 +85,7 @@ defmodule Battleship.Game.Board do
 
   defp transcribed_guesses(board, show_ships) do
     range = 0..(Game.board_size - 1)
+    IO.inspect(board)
     Enum.map(range, fn(y) ->
       Enum.map(range, fn(x) ->
         {:ok, posn} = Posn.new(x, y)

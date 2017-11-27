@@ -1,30 +1,25 @@
 import React from 'react'
 
 import channel from '../socket'
-import { NOT_GUESSED, GUESSED, HIT, SUNK, SHIP } from '../battleship/constants'
+import constants from '../battleship/constants'
+
+const classFromStatus = {
+  [constants.SHIP]: 'bg-primary',
+  [constants.GUESSED]: 'bg-secondary',
+  [constants.SUNK]: 'bg-danger',
+  [constants.HIT]: 'bg-warning'
+}
 
 class Tile extends React.Component {
-  classFromState() {
-    let defaults = 'border tile'
-    switch(this.props.state) {
-      case SHIP:
-        return `bg-primary ${defaults}`
-      case NOT_GUESSED:
-        return `bg-light ${defaults}`
-      case GUESSED:
-        return `bg-secondary ${defaults}`
-      case HIT:
-        return `bg-warning ${defaults}`
-      case SUNK:
-        return `bg-danger ${defaults}`
-      default:
-        return `bg-light ${defaults}`
-    }
+  classFromStatus(status) {
+    let baseClass = classFromStatus[status] || 'bg-light'
+    return `${baseClass} border tile`
   }
 
   render() {
+    let className = this.classFromStatus(this.props.status)
     return (
-      <td className={this.classFromState()} onClick={this.props.onClick}></td>
+      <td className={className} onClick={this.props.onClick}></td>
     )
   }
 }
@@ -70,7 +65,7 @@ class Grid extends React.Component {
   render() {
     let rows = this.props.grid.map((row, y) => {
       let tiles = row.map((square, x) => {
-        return <Tile onClick={this.handleClick.bind(this, x, y)} key={x} state={square}/>
+        return <Tile onClick={this.handleClick.bind(this, x, y)} key={x} status={square}/>
       })
       return (<tr key={y}>{tiles}</tr>)
     })

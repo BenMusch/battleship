@@ -26,22 +26,13 @@ defmodule Battleship.Game.Ship do
   end
 
   def hit?(ship, posn) do
-    Posn.distance(ship.head, posn) + Posn.distance(ship.tail, posn) ==
-      Posn.distance(ship.head, ship.tail)
+    Enum.any?(coords(ship), fn(p) -> p.x == posn.x && p.y == posn.y end)
   end
 
   def overlaps?(a, b) do
-    cond do
-      vertical?(a) == vertical?(b) ->
-        # when parallel, check if a head/tail overlaps
-        hit?(a, b.tail) || hit?(a, b.head)
-      horizontal?(a) ->
-        (a.head.y >= b.head.y && a.tail.y <= b.head.y) ||
-          (a.head.y <= b.head.y && a.tail.y >= b.head.y)
-      horizontal?(b) ->
-        (b.head.y >= a.head.y && b.tail.y <= a.head.y) ||
-          (b.head.y <= a.head.y && b.tail.y >= a.head.y)
-    end
+    Enum.any?(Ship.coords(a), fn(posn1) ->
+      Enum.any?(Ship.coords(b), fn(posn2) -> posn2.x == posn1.x && posn1.y == posn1.y end)
+    end)
   end
 
   def hit!(ship) do
@@ -51,12 +42,12 @@ defmodule Battleship.Game.Ship do
   def coords(ship) do
     if vertical?(ship) do
       Enum.map((ship.head.y)..(ship.tail.y), fn(y) ->
-        {:ok, posn} = Posn.new(y, ship.head.x)
+        {:ok, posn} = Posn.new(ship.head.x, y)
         posn
       end)
     else
       Enum.map((ship.head.x)..(ship.tail.x), fn(x) ->
-        {:ok, posn} = Posn.new(ship.head.y, x)
+        {:ok, posn} = Posn.new(x, ship.head.y)
         posn
       end)
     end
