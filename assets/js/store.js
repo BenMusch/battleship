@@ -4,6 +4,7 @@ import rootReducer from './reducers/index'
 import { NOT_GUESSED } from './battleship/constants'
 
 const defaultState = {
+  id: null,
   player: { joining: true },
   board: {
     grid: Array(10).fill(Array(10).fill(NOT_GUESSED)),
