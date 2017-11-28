@@ -30,6 +30,7 @@ class Boards extends React.Component {
               canGuess={false}
               updateBoard={this.props.updateBoard}
               updateOpponent={this.props.updateOpponent}
+              channel={this.props.channel}
             />
           </div>
         </div>
@@ -41,6 +42,7 @@ class Boards extends React.Component {
               canGuess={this.canGuess()}
               updateBoard={this.props.updateBoard}
               updateOpponent={this.props.updateOpponent}
+              channel={this.props.channel}
             />
           </div>
 

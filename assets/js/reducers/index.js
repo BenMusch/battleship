@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux'
 
-import player from './player'
+import game from './game'
 import board from './board'
 import opponent from './opponent'
 
-const rootReducer = combineReducers({player, board, opponent})
+const rootReducer = combineReducers({game, board, opponent})
 
 export default rootReducer

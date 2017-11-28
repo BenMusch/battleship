@@ -1,12 +1,12 @@
 defmodule BattleshipWeb.UserSocket do
   use Phoenix.Socket
 
-  channel "player:*", BattleshipWeb.PlayerChannel
+  channel "game:*", BattleshipWeb.PlayerChannel
 
   transport :websocket, Phoenix.Transports.WebSocket
 
-  def connect(_params, socket) do
-    {:ok, socket}
+  def connect(params, socket) do
+    {:ok, assign(socket, :player_id, params["player_id"])}
   end
 
   def id(_socket), do: nil

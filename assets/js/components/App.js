@@ -5,7 +5,7 @@ import Game from './Game'
 
 const mapStateToProps = (state) => {
   return {
-    player: state.player,
+    game: state.game,
     opponent: state.opponent,
     board: state.board
   }
