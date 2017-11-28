@@ -29,7 +29,7 @@ defmodule Battleship.GameAgent do
   end
 
   def handle_call({:create_game, game_id}, _from, games) do
-    game = Game.new
+    game = Game.new(game_id)
     games = Map.put(games, game_id, game)
     {:reply, {:ok, game}, games}
   end

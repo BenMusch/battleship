@@ -3,7 +3,7 @@ defmodule Battleship.Game do
   alias Battleship.Game.Board
   alias Battleship.Game.Player
 
-  defstruct [:player1, :player2]
+  defstruct [:id, :player1, :player2]
 
   @board_size 10
   @ship_sizes [5, 4, 3, 3, 2]
@@ -11,7 +11,7 @@ defmodule Battleship.Game do
   def board_size, do: @board_size
   def ship_sizes, do: @ship_sizes
 
-  def new, do: %Game{}
+  def new(id), do: %Game{id: id}
 
   def view_for(game, player_id) do
     player = player(game, player_id)
@@ -22,6 +22,7 @@ defmodule Battleship.Game do
     opponent_id = if opponent == nil, do: nil, else: opponent.id
 
     %{
+      id: game.id,
       player: %{ id: player_id },
       opponent: Map.put(Board.opponent_view(opponent_board), :id, opponent_id),
       board: Board.owner_view(player.board)
