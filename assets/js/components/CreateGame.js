@@ -13,19 +13,25 @@ class CreateGame extends React.Component {
     this.setState({joinCode: event.target.value})
   }
 
-  createGame(event) {
+  handleCreate(event) {
     event.preventDefault()
-    this.setState({joinCode: uuid()})
-    this.joinGame(event)
+    this.join(uuid())
   }
 
-  joinGame(event) {
+  handleJoin(event) {
     event.preventDefault()
-    let channel = socket.channel(`game:${this.state.joinCode}`)
+    this.join(this.state.joinCode)
+  }
+
+  join(gameId) {
+    let channel = socket.channel(`game:${gameId}`)
 
     channel.join()
       .receive('ok', resp => {
-        this.props.joinGame(resp)
+        console.log(resp)
+        this.props.joinGame(resp.id, channel)
+        this.props.updateBoard(resp.board)
+        this.props.updateOpponent(resp.opponent)
       })
       .receive('error', resp => {
         alert('Full game!')
@@ -42,9 +48,9 @@ class CreateGame extends React.Component {
     return (
       <div className="create-game">
         <center>
-          <button className="btn btn-primary" onClick={this.joinGame.bind(this)}>Create a Game</button>
+          <button className="btn btn-primary" onClick={this.handleCreate.bind(this)}>Create a Game</button>
           <span>Or</span>
-          <form className="form-inline" onSubmit={this.joinGame}>
+          <form className="form-inline" onSubmit={this.handleJoin.bind(this)}>
             <input type="text" className="form-control" placeholde="Join code"
               value={this.state.joinCode} onChange={this.updateJoinCode.bind(this)}/>
             <input type="submit" value="Join Game!"/>

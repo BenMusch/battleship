@@ -6,7 +6,8 @@ import { NOT_GUESSED } from './battleship/constants'
 const defaultState = {
   game: {
     id: null,
-    joining: false
+    joining: false,
+    channel: null
   },
   board: {
     grid: Array(10).fill(Array(10).fill(NOT_GUESSED)),

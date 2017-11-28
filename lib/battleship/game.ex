@@ -116,9 +116,9 @@ defmodule Battleship.Game do
 
   defp opponent_key(game, player_id) do
     cond do
-      player_id == game.player1.id ->
+      game.player1 != nil && player_id == game.player1.id ->
         :player2
-      player_id == game.player2.id ->
+      game.player2 != nil && player_id == game.player2.id ->
         :player1
       true ->
         nil

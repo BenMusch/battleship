@@ -6,9 +6,8 @@ import CreateGame from "./CreateGame"
 
 class Game extends React.Component {
   mainDisplay() {
-    console.log(this.props)
     if (this.props.game.id && this.props.opponent.id) {
-      return <Boards id={this.props.game.id} player={this.props.board} opponent={this.props.opponent} updateBoard={this.props.updateBoard} updateOpponent={this.props.updateOpponent} />
+      return <Boards channel={this.props.game.channel} player={this.props.board} opponent={this.props.opponent} updateBoard={this.props.updateBoard} updateOpponent={this.props.updateOpponent} />
     } else if (this.props.game.id) {
       return React.createElement('p', {}, `Waiting for opponent... Code: ${this.props.game.id}`)
     } else {

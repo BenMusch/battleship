@@ -15,7 +15,6 @@ class Boards extends React.Component {
     return (
       <div className="row">
         <div className="col-md-6 row">
-          <h4 className="text-center">Join code: {this.props.id}</h4>
           <div className="col-md-4">
             <h4 className="text-center">You</h4>
             <span>Unplaced ships:</span>
@@ -31,6 +30,7 @@ class Boards extends React.Component {
               canGuess={false}
               updateBoard={this.props.updateBoard}
               updateOpponent={this.props.updateOpponent}
+              channel={this.props.channel}
             />
           </div>
         </div>
@@ -42,6 +42,7 @@ class Boards extends React.Component {
               canGuess={this.canGuess()}
               updateBoard={this.props.updateBoard}
               updateOpponent={this.props.updateOpponent}
+              channel={this.props.channel}
             />
           </div>
 

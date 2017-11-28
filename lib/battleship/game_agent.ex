@@ -13,7 +13,7 @@ defmodule Battleship.GameAgent do
   end
 
   def exists?(game_id) do
-    GameServer.call(__MODULE__, {:exists?, game_id})
+    GenServer.call(__MODULE__, {:exists?, game_id})
   end
 
   def add_player(game_id, player_id) do
@@ -39,12 +39,13 @@ defmodule Battleship.GameAgent do
   end
 
   def handle_call({:exists?, game_id}, _from, games) do
-    {:reply, {Map.get(game, game_id) == nil}, games}
+    {:reply, Map.has_key?(games, game_id), games}
   end
 
   def handle_call({:add_player, game_id, player_id}, _from, games) do
     game = Map.get(games, game_id)
     {result, game} = Game.add_player(game, Player.new(player_id))
+    games = Map.put(games, game_id, game)
     {:reply, {result, Game.view_for(game, player_id)}, games}
   end
 

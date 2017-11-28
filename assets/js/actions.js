@@ -1,7 +1,8 @@
-export const joinGame = () => {
+export const joinGame = (id, channel) => {
   return {
     type: 'JOIN_GAME',
-    id: id
+    id,
+    channel
   }
 }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import channel from '../socket'
+import socket from '../socket'
 import constants from '../battleship/constants'
 
 const classFromStatus = {
@@ -31,8 +31,7 @@ class Grid extends React.Component {
   }
 
   handleGuess(x, y) {
-    console.log('GUESSING', [x, y])
-    channel.push('guess', { x, y })
+    this.props.channel.push('guess', { x, y })
       .receive('ok', resp => {
         console.log(resp)
         this.props.updateBoard(resp.board)
@@ -44,7 +43,7 @@ class Grid extends React.Component {
   handlePlace(x, y) {
     if (this.state.head) {
       console.log('PLACING', this.state.head, [x, y])
-      channel.push('place', {
+      this.props.channel.push('place', {
         x1: this.state.head[0],
         y1: this.state.head[1],
         x2: x,

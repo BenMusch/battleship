@@ -1,8 +1,8 @@
 const game = (state = {}, action) => {
-  console.log(action, state)
   switch(action.type) {
     case 'JOIN_GAME':
-      return { id: action.id }
+      console.log(action)
+      return { id: action.id, channel: action.channel }
     default:
       return state
   }
