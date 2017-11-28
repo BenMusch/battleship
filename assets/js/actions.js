@@ -1,4 +1,11 @@
-export const joinGame = (id) => {
+export const setUser = (id) => {
+  return {
+    type: 'SET_USER',
+    id: id
+  }
+}
+
+export const joinGame = () => {
   return {
     type: 'JOIN_GAME',
     id: id
