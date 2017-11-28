@@ -3,13 +3,15 @@ defmodule BattleshipWeb.PlayerChannel do
   alias Battleship.GameAgent
 
   def join("game:" <> game_id, _payload, socket) do
-    {:ok, game} = GameAgent.create_game(game_id)
+    if GameAgent.exists?(game_id) do
+      {:ok, game} = GameAgent.create_game(game_id)
+    end
     player_id = socket.assigns[:player_id]
 
     case GameAgent.add_player(game_id, player_id) do
-      {:ok, game} ->
+      {:ok, game_id} ->
         socket = assign(socket, :game_id, game_id)
-        {:ok, game, socket}
+        {:ok, game_id, socket}
       {:error, reason} ->
         {:error, %{reason: reason}}
     end

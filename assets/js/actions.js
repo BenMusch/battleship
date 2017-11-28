@@ -1,20 +1,7 @@
-export const setUser = (id) => {
-  return {
-    type: 'SET_USER',
-    id: id
-  }
-}
-
 export const joinGame = () => {
   return {
     type: 'JOIN_GAME',
     id: id
-  }
-}
-
-export const failJoin = () => {
-  return {
-    type: 'FAIL_JOIN'
   }
 }
 
