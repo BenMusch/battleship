@@ -13,6 +13,21 @@ defmodule Battleship.Game do
 
   def new, do: %Game{}
 
+  def view_for(game, player_id) do
+    player = player(game, player_id)
+
+    opponent = opponent(game, player_id)
+
+    opponent_board = if opponent == nil, do: Board.new, else: opponent.board
+    opponent_id = if opponent == nil, do: nil, else: opponent.id
+
+    %{
+      player: %{ id: player_id },
+      opponent: Map.put(Board.opponent_view(opponent_board), :id, opponent_id),
+      board: Board.owner_view(player.board)
+    }
+  end
+
   def add_player(game, player) do
     cond do
       game.player1 && game.player2 ->
@@ -35,18 +50,22 @@ defmodule Battleship.Game do
   end
 
   def guess(game, player_id, posn) do
-    opponent = opponent(game, player_id)
-    {result, board} = Board.guess(opponent.board, posn)
+    if Game.can_guess?(game, player_id) do
+      opponent = opponent(game, player_id)
+      {result, board} = Board.guess(opponent.board, posn)
 
-    if result != :error do
-      opponent = %{ opponent | board: board }
-      Map.put(game, opponent_key(game, player_id), opponent)
+      if result != :error do
+        opponent = %{ opponent | board: board }
+        game = Map.put(game, opponent_key(game, player_id), opponent)
 
-      player = player(game, player_id) |> Player.turn!
-      board = Map.put(game, player_key(game, player_id), player)
+        player = player(game, player_id) |> Player.turn!
+        game = Map.put(game, player_key(game, player_id), player)
+      end
+
+      {result, game}
+    else
+      {:error, :cant_guess}
     end
-
-    {result, game}
   end
 
   def place(game, player_id, head, tail) do
@@ -54,26 +73,43 @@ defmodule Battleship.Game do
     case Board.place(player.board, head, tail) do
       {:ok, board} ->
         player = %{ player | board: board }
-        {:ok, Map.put(game, player_key(game, player), player)}
+        game = Map.put(game, player_key(game, player_id), player)
+        {:ok, game}
       {:error, reason} ->
         {:error, reason}
     end
   end
 
+  def full?(game) do
+    game.player1 != nil && game.player2 != nil
+  end
+
+  def can_guess?(game, player_id) do
+    if full?(game) do
+      turns_behind_opponent = opponent(game, player_id).turns - player(game, player_id).turns
+      turns_behind_opponent == 1 || turns_behind_opponent == 0
+    else
+      false
+    end
+  end
+
   defp opponent(game, player_id) do
-    game[opponent_key(game, player_id)]
+    Map.get(game, opponent_key(game, player_id))
   end
 
   defp player(game, player_id) do
-    game[player_key(game, player_id)]
+    Map.get(game, player_key(game, player_id))
   end
 
   defp player_key(game, player_id) do
+    # TODO: Have a 'waiting for an opponent' state
     cond do
-      player_id == game.player1.id ->
+      game.player1 != nil && player_id == game.player1.id ->
         :player1
-      player_id == game.player2.id ->
+      game.player2 != nil && player_id == game.player2.id ->
         :player2
+      true ->
+        nil
     end
   end
 
@@ -83,6 +119,8 @@ defmodule Battleship.Game do
         :player2
       player_id == game.player2.id ->
         :player1
+      true ->
+        nil
     end
   end
 end

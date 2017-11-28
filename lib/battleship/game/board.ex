@@ -20,6 +20,26 @@ defmodule Battleship.Game.Board do
     }
   end
 
+  def opponent_view(board) do
+    %{
+      unplaced_ships: Enum.map(board.unplaced_ships, fn(s) -> s.size end),
+      grid: transcribed_guesses(board, false)
+    }
+  end
+
+  def owner_view(board) do
+    %{
+      unplaced_ships: Enum.map(board.unplaced_ships, fn(s) -> s.size end),
+      grid: transcribed_guesses(board, true),
+      placed_ships: Enum.map(board.placed_ships, fn(s) ->
+        %{
+          sunk: Ship.sunk?(s),
+          coords: Enum.map(Ship.coords(s), fn(p) -> [p.x, p.y] end)
+        }
+      end)
+    }
+  end
+
   def place(board, head, tail) do
     ship_size = Posn.distance(head, tail) + 1
     ship = Enum.find(board.unplaced_ships, fn(s) -> s.size == ship_size end)
@@ -29,7 +49,7 @@ defmodule Battleship.Game.Board do
       case Ship.place(ship, head, tail) do
         {:ok, ship} ->
           if Enum.any?(board.placed_ships, fn(s) -> Ship.overlaps?(s, ship) end) do
-            {:error, Enum.find(board.placed_ships, fn(s) -> Ship.overlaps?(s, ship) end)}
+            {:error, :overlapping_ship}
           else
             new_unplaced = List.delete_at(board.unplaced_ships, i)
             new_placed = [ship | board.placed_ships]
@@ -61,5 +81,33 @@ defmodule Battleship.Game.Board do
 
   def over?(board) do
     Enum.all?(board.placed_ships, fn(s) -> s.sunk? end) && Enum.empty?(board.unplaced_ships)
+  end
+
+  defp transcribed_guesses(board, show_ships) do
+    range = 0..(Game.board_size - 1)
+    Enum.map(range, fn(y) ->
+      Enum.map(range, fn(x) ->
+        {:ok, posn} = Posn.new(x, y)
+
+        ship_i = ship_at(board, posn)
+        cond do
+          ship_i == nil && MapSet.member?(board.guesses, posn) ->
+            :GUESSED
+          ship_i != nil && Ship.sunk?(Enum.at(board.placed_ships, ship_i)) ->
+            :SUNK
+          ship_i != nil && MapSet.member?(board.guesses, posn) ->
+            :HIT
+          ship_i != nil && show_ships ->
+            :SHIP
+          true ->
+            :NOT_GUESSED
+        end
+      end)
+    end)
+  end
+
+  # Returns the index of the ship located at the coordinates, if any
+  defp ship_at(board, posn) do
+    Enum.find_index(board.placed_ships, fn(s) -> Ship.hit?(s, posn) end)
   end
 end
