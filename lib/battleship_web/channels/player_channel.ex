@@ -2,10 +2,13 @@ defmodule BattleshipWeb.PlayerChannel do
   use BattleshipWeb, :channel
   alias Battleship.GameAgent
 
-  def join("player:" <> id, _payload, socket) do
-    case GameAgent.add_player(id) do
+  def join("game:" <> game_id, _payload, socket) do
+    {:ok, game} = GameAgent.create_game(game_id)
+    player_id = socket.assigns[:player_id]
+
+    case GameAgent.add_player(game_id, player_id) do
       {:ok, game} ->
-        socket = assign(socket, :player_id, id)
+        socket = assign(socket, :game_id, game_id)
         {:ok, game, socket}
       {:error, reason} ->
         {:error, %{reason: reason}}
@@ -15,7 +18,7 @@ defmodule BattleshipWeb.PlayerChannel do
   def handle_in("confirm_join", _params, socket) do
     if !socket.assigns[:confirmed] do
       socket = assign(socket, :confirmed, true)
-      {:ok, game} = GameAgent.get_data(socket.assigns[:player_id])
+      {:ok, game} = GameAgent.get_data(socket.assigns[:game_id], socket.assigns[:player_id])
       update_opponent!(game)
     end
 
@@ -23,10 +26,11 @@ defmodule BattleshipWeb.PlayerChannel do
   end
 
   def handle_in("place", %{"x1" => x1, "y1" => y1, "x2" => x2, "y2" => y2}, socket) do
+    game_id = socket.assigns[:game_id]
     player_id = socket.assigns[:player_id]
-    case GameAgent.place(player_id, x1: x1, y1: y1, x2: x2, y2: y2) do
+    case GameAgent.place(game_id, player_id, x1: x1, y1: y1, x2: x2, y2: y2) do
       {:ok, _} ->
-        {:ok, game} = GameAgent.get_data(player_id)
+        {:ok, game} = GameAgent.get_data(game_id, player_id)
         update_opponent!(game)
         {:reply, {:ok, game}, socket}
       {:error, reason} ->
@@ -35,10 +39,11 @@ defmodule BattleshipWeb.PlayerChannel do
   end
 
   def handle_in("guess", %{"x" => x, "y" => y}, socket) do
+    game_id = socket.assigns[:game_id]
     player_id = socket.assigns[:player_id]
-    case GameAgent.guess(player_id, x: x, y: y) do
+    case GameAgent.guess(game_id, player_id, x: x, y: y) do
       {:ok, _} ->
-        {:ok, game} = GameAgent.get_data(player_id)
+        {:ok, game} = GameAgent.get_data(game_id, player_id)
         update_opponent!(game)
         {:reply, {:ok, game}, socket}
       {:error, reason} ->
@@ -49,8 +54,8 @@ defmodule BattleshipWeb.PlayerChannel do
   defp update_opponent!(game) do
     if game[:opponent][:id] != nil do
       id = game[:opponent][:id]
-      {:ok, game} = GameAgent.get_data(id)
-      BattleshipWeb.Endpoint.broadcast!("player:#{id}", "update", game)
+      {:ok, game} = GameAgent.get_data(game[:id], id)
+      BattleshipWeb.Endpoint.broadcast!("game:#{id}", "update", game)
     end
   end
 end
